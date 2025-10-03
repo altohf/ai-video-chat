@@ -6,10 +6,13 @@ Piattaforma per conversazioni intelligenti con contenuti video
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from app.routers import auth, upload, chat
 import uvicorn
 import structlog
-
 from app.config import settings
+from dotenv import load_dotenv
+load_dotenv()  # Carica le variabili dal file .env
+
 
 # Configurazione logging
 structlog.configure(
@@ -95,10 +98,11 @@ async def shutdown_event():
     logger.info("AI Video Chat API shutting down...")
 
 # Importazione router (li aggiungeremo dopo)
-# from app.routers import auth, upload, chat
-# app.include_router(auth.router, prefix="/api/v1")
-# app.include_router(upload.router, prefix="/api/v1")
-# app.include_router(chat.router, prefix="/api/v1")
+# Include routers
+app.include_router(auth.router, prefix="/api/auth", tags=["authentication"])
+app.include_router(upload.router, prefix="/api", tags=["upload"])
+app.include_router(chat.router, prefix="/api", tags=["chat"])
+
 
 if __name__ == "__main__":
     uvicorn.run(
